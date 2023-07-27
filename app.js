@@ -1,11 +1,19 @@
 const express = require('express');
 const app = express();
-
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
+const socket = require("socket.io")
+// App setup
+const PORT = 5000;
+const server = app.listen(PORT, function () {
+  console.log(`Listening on port ${PORT}`);
+  console.log(`http://localhost:${PORT}`);
 });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+// Static files
+app.use(express.static("public"));
+
+// Socket setup
+const io = socket(server);
+
+io.on("connection", function (socket) {
+  console.log("Made socket connection");
 });
