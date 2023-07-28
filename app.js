@@ -1,19 +1,22 @@
-const express = require('express');
-const app = express();
-const socket = require("socket.io")
-// App setup
-const PORT = 5000;
-const server = app.listen(PORT, function () {
-  console.log(`Listening on port ${PORT}`);
-  console.log(`http://localhost:${PORT}`);
+const app = require("express")();
+const server = require("http").createServer(app);
+const cors = require("cors");
+
+const io = require("socket.io")(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    }
 });
 
-// Static files
-app.use(express.static("public"));
+app.use(cors());
 
-// Socket setup
-const io = socket(server);
+ const PORT = process.env.PORT || 5000 
 
-io.on("connection", function (socket) {
-  console.log("Made socket connection");
-});
+ app.get("/", (req,res) => {
+    res.send("Server is running");
+ });
+
+ server.listen(PORT, ()=>{
+  console.log(`Server is listening ${PORT }`)
+ })
