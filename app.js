@@ -17,18 +17,19 @@ app.use(cors());
     res.send("Server is running");
 
  });
-
+ let owner = null
  io.on("connection",(socket) => {
     socket.on("createRoom",(roomID,callback) =>{
-      socket.join(roomID)
-
+      socket.join(roomID.toString())
+  
       if (typeof callback === "function") {
         callback({ success: true, message: `Successfully joined room ${roomID}` });
       }
     });
 
     socket.on("joinRoom",roomID =>{
-      socket.join(roomID)
+      socket.join(roomID.toString())
+      io.to(roomID.toString()).emit('newUser', socket.id);
     });
 
     
