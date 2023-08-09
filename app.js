@@ -27,10 +27,17 @@ app.use(cors());
       }
     });
 
-    socket.on("joinRoom",roomID =>{
+    socket.on("joinRoom",(roomID,callback) =>{
       socket.join(roomID.toString())
       io.to(roomID.toString()).emit('newUser', socket.id);
+      if (typeof callback === "function") {
+        callback({ success: true, message: `Successfully joined room ${roomID}` });
+      }
     });
+
+    socket.on("sendPeerData",({userToCall, signalData, from, name})=>{
+      io.to(userToCall).emit("peerData", {signal: signalData,from:socket.id,name})
+    })
 
     
     socket.emit("me",socket.id)
@@ -43,7 +50,7 @@ app.use(cors());
         io.to(userToCall).emit("callUser", {signal: signalData,from,name})
     })
 
-    socket.on("answerCall", ()=> {
+    socket.on("answerCall", (data)=> {
       io.to(data.to).emit("callAccepted", data.signal )
     })
  })
